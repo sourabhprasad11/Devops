@@ -36,9 +36,9 @@ spec:
         - name: MYSQL_USER
           value: root
         - name: MYSQL_ROOT_PASSWORD
-          value: delta123
+          value: password
         - name: MYSQL_DATABASE
-          value: djangodb
+          value: db_name
         ports:
         - name: tcp
           containerPort: 3306
@@ -173,7 +173,7 @@ spec:
 
 
 ----------
-ingree.yml
+ingress.yml
 ----------
 
 apiVersion: networking.k8s.io/v1beta1

@@ -1,0 +1,35 @@
+AWSTemplateFormatVersion: 2010-09-09
+# CloudFormation template: bolier_Plate 
+Resources:
+  #VPC
+  VPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: 10.3.0.0/16
+      EnableDnsSupport: true
+      EnableDnsHostnames: true
+      Tags:
+      - Key: Name
+        Value:  !Join ['', [!Ref "AWS::StackName", "-VPC" ]]
+  
+  PublicSubnetA:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      CidrBlock: 10.3.0.0/25
+      AvailabilityZone: ap-south-1a
+      Tags:
+      - Key: Name
+        Value: !Sub ${AWS::StackName}-Public-A
+
+  PrivateSubnetA:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      CidrBlock: 10.3.0.128/25
+      AvailabilityZone: ap-south-1b
+      Tags:
+      - Key: Name
+        Value: !Sub ${AWS::StackName}-Private-B
+
+

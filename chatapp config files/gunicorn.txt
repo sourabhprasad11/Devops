@@ -1,0 +1,41 @@
+[ec2-user@ip-10-0-0-165 ~]$ sudo systemctl status gunicorn
+● gunicorn.service - gunicorn daemon
+   Loaded: loaded (/etc/systemd/system/gunicorn.service; enabled; vendor preset: disabled)
+   Active: failed (Result: exit-code) since Sat 2020-12-12 06:31:21 UTC; 25min ago
+  Process: 6853 ExecStart=/usr/local/bin/gunicorn --workers 3 --bind unix:/DpyApp/new_chatapp/fundoo/new_chatapp.sock fundoo.wsgi:application (code=exited, status=1/FAILURE)
+ Main PID: 6853 (code=exited, status=1/FAILURE)
+
+Dec 12 06:31:16 ip-10-0-0-165.ap-south-1.compute.internal gunicorn[6853]: [2020-12-12 06:31:16 +0000] [6853] [INFO] Starting guni....9.0
+Dec 12 06:31:16 ip-10-0-0-165.ap-south-1.compute.internal gunicorn[6853]: [2020-12-12 06:31:16 +0000] [6853] [ERROR] Retrying in ...ond.
+Dec 12 06:31:17 ip-10-0-0-165.ap-south-1.compute.internal gunicorn[6853]: [2020-12-12 06:31:17 +0000] [6853] [ERROR] Retrying in ...ond.
+Dec 12 06:31:18 ip-10-0-0-165.ap-south-1.compute.internal gunicorn[6853]: [2020-12-12 06:31:18 +0000] [6853] [ERROR] Retrying in ...ond.
+Dec 12 06:31:19 ip-10-0-0-165.ap-south-1.compute.internal gunicorn[6853]: [2020-12-12 06:31:19 +0000] [6853] [ERROR] Retrying in ...ond.
+Dec 12 06:31:20 ip-10-0-0-165.ap-south-1.compute.internal gunicorn[6853]: [2020-12-12 06:31:20 +0000] [6853] [ERROR] Retrying in ...ond.
+Dec 12 06:31:21 ip-10-0-0-165.ap-south-1.compute.internal gunicorn[6853]: [2020-12-12 06:31:21 +0000] [6853] [ERROR] Can't connec...sock
+Dec 12 06:31:21 ip-10-0-0-165.ap-south-1.compute.internal systemd[1]: gunicorn.service: main process exited, code=exited, status=...LURE
+Dec 12 06:31:21 ip-10-0-0-165.ap-south-1.compute.internal systemd[1]: Unit gunicorn.service entered failed state.
+Dec 12 06:31:21 ip-10-0-0-165.ap-south-1.compute.internal systemd[1]: gunicorn.service failed.
+Warning: gunicorn.service changed on disk. Run 'systemctl daemon-reload' to reload units.
+Hint: Some lines were ellipsized, use -l to show in full.
+
+
+[ec2-user@ip-10-0-0-165 ~]$ sudo systemctl daemon-reload
+[ec2-user@ip-10-0-0-165 ~]$ sudo systemctl start gunicorn
+[ec2-user@ip-10-0-0-165 ~]$ sudo systemctl enable gunicorn
+[ec2-user@ip-10-0-0-165 ~]$ sudo systemctl status gunicorn
+● gunicorn.service - gunicorn daemon
+   Loaded: loaded (/etc/systemd/system/gunicorn.service; enabled; vendor preset: disabled)
+   Active: failed (Result: exit-code) since Sat 2020-12-12 06:58:37 UTC; 7s ago
+ Main PID: 7059 (code=exited, status=1/FAILURE)
+
+Dec 12 06:58:32 ip-10-0-0-165.ap-south-1.compute.internal gunicorn[7059]: [2020-12-12 06:58:32 +0000] [7059] [INFO] Starting guni....9.0
+Dec 12 06:58:32 ip-10-0-0-165.ap-south-1.compute.internal gunicorn[7059]: [2020-12-12 06:58:32 +0000] [7059] [ERROR] Retrying in ...ond.
+Dec 12 06:58:33 ip-10-0-0-165.ap-south-1.compute.internal gunicorn[7059]: [2020-12-12 06:58:33 +0000] [7059] [ERROR] Retrying in ...ond.
+Dec 12 06:58:34 ip-10-0-0-165.ap-south-1.compute.internal gunicorn[7059]: [2020-12-12 06:58:34 +0000] [7059] [ERROR] Retrying in ...ond.
+Dec 12 06:58:35 ip-10-0-0-165.ap-south-1.compute.internal gunicorn[7059]: [2020-12-12 06:58:35 +0000] [7059] [ERROR] Retrying in ...ond.
+Dec 12 06:58:36 ip-10-0-0-165.ap-south-1.compute.internal gunicorn[7059]: [2020-12-12 06:58:36 +0000] [7059] [ERROR] Retrying in ...ond.
+Dec 12 06:58:37 ip-10-0-0-165.ap-south-1.compute.internal gunicorn[7059]: [2020-12-12 06:58:37 +0000] [7059] [ERROR] Can't connec...sock
+Dec 12 06:58:37 ip-10-0-0-165.ap-south-1.compute.internal systemd[1]: gunicorn.service: main process exited, code=exited, status=...LURE
+Dec 12 06:58:37 ip-10-0-0-165.ap-south-1.compute.internal systemd[1]: Unit gunicorn.service entered failed state.
+Dec 12 06:58:37 ip-10-0-0-165.ap-south-1.compute.internal systemd[1]: gunicorn.service failed.
+Hint: Some lines were ellipsized, use -l to show in full.

@@ -1,0 +1,29 @@
+version: 0.0
+os: Amazon linux
+files:
+  - source: ./
+    destination: /home/ec2-user/new_chatapp/
+permissions:
+  - object: /home/ec2-user/new_chatapp/
+    pattern: "**"
+    owner: ec2-user
+    group: ec2-user
+hooks:
+  BeforeInstall:
+    - location: scripts/before_install.sh
+      timeout: 300
+      runas: ec2-user
+  AfterInstall:
+    - location: scripts/install_dependancies.sh
+      timeout: 600
+      runas: ec2-user
+    - location: scripts/gunicorn.sh
+      timeout: 600
+      runas: ec2-user
+    - location: scripts/nginx.sh
+      timeout: 600
+      runas: ec2-user
+  ApplicationStart:
+    - location: scripts/start_application.sh
+      timeout: 600
+      runas: ec2-user

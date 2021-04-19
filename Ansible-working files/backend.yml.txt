@@ -1,0 +1,132 @@
+- hosts: backendserver
+  become: yes
+
+  tasks:
+  - name: Update
+    become: true
+    shell: sudo apt update
+
+  - name: Install mysql
+    apt:
+      name: mysql-server
+      state: present
+
+  - name: Install gcc
+    apt:
+      name: gcc
+      state: present
+
+#  - name: Install gcc
+#    apt:
+#      name: c++
+#      state: present
+
+
+  - name: Install git
+    apt:
+      name: git
+      state: present
+
+  - name: Install mysqlclient
+    apt:
+      name: mysql-client
+      state: present
+
+
+  - name: Install mysql-client-lib-dev
+    apt:
+      name: libmysqlclient-dev
+      state: present
+
+
+  - name: Install libssl-dev
+    apt:
+      name: libssl-dev
+      state: present
+
+  - name: Install mysqlclient-python-mysqldb
+    apt:
+      name: python-mysqldb
+      state: present
+
+  - name: Clone a repository
+    git:
+      repo: https://github.com/sourabhprasad11/ChatApp.git
+      clone: yes
+      version: master
+      dest: /home/ubuntu/demo
+      accept_hostkey: yes
+
+
+  - name: Install python-3
+    apt:
+      name: python3
+      state: present
+
+  - name: Install lib
+    apt:
+      name: python3-dev
+      state: present
+
+  - name: Install build
+    apt:
+      name: build-essential
+      state: present
+
+
+- name: Install or update pip
+    apt:
+      name: python-pip
+      update_cache: yes
+      state: present
+#      name: python3-pip
+#      state: present
+
+#  - name: Install python setupup tools
+#    apt:
+#      name: python3-setuptools
+#      state: present
+
+
+#  - name: Install mysqlclient
+#    pip:
+#      name: mysqlclient
+#      state: present
+
+
+  - name: Install specified python requirements
+    pip:
+      requirements: /home/ubuntu/demo/requirements.txt
+
+
+  - name: Execute a command using the shell module
+    become: true
+    shell: sudo sed -i 's/DjangoDatabase/DjangoDB/g' /home/ubuntu/demo/fundoo/fundoo/settings.py
+
+# - name: Execute a command change passwd using the shell module
+#   become: true
+#   shell: sudo sed -i 's/123456789/delta123/g' /home/ubuntu/demo/fundoo/fundoo/settings.py
+
+  - name: Copy files to a remote machine
+    template:
+      src: /home/ubuntu/django.service
+      dest: /etc/systemd/system/
+
+
+  - name: Execute a command for Daemon Reload
+    become: true
+    shell: sudo systemctl daemon-reload
+
+
+  - name: Execute a command for django service shell module
+    become: true
+    shell: sudo systemctl start django.service
+
+
+  - name: Execute a command for django service shell module
+    become: true
+    shell: sudo systemctl enable django.service
+
+
+
+

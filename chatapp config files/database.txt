@@ -1,0 +1,18 @@
+
+PROMPT> mysql -h <endpoint> -P 3306 -u <mymasteruser> -p
+
+
+done for the image upload to the ECR
+
+
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'djangodb',
+        'USER': 'root',
+        'PASSWORD': 'delta123',
+        'HOST': 'mysql',
+        'PORT': '3306',
+    }
+}

@@ -1,0 +1,6 @@
+maintained under /etc/ansible/group_vars/servers
+
+#########servers file##############
+
+---
+ansible_ssh_user: root

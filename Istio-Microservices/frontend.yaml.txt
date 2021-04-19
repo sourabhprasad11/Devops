@@ -1,0 +1,69 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: django-conf
+data:
+  django.conf: |
+                server {
+                listen 80;
+                server_name _;
+                location = /favicon.ico {
+                access_log off;
+                log_not_found off;
+                 }
+                location /etc/nginx/conf.d/static/ {
+                autoindex on;
+                alias /etc/nginx/conf.d/static/;
+                 }
+                location / {
+                proxy_set_header Host $http_host;
+                proxy_set_header X-Real-IP $remote_addr;
+                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                proxy_set_header X-Forwarded-Proto $scheme;
+                proxy_pass http://my-svc:8000;
+                 }
+                }
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend-deploy
+  labels:
+    app: frontend
+spec:
+  selector:
+    matchLabels:
+      app: nginx
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: frontend
+        image: 423034607203.dkr.ecr.ap-south-1.amazonaws.com/frontendcomp:frontend5
+        ports :
+        - name: http
+          containerPort: 80
+        volumeMounts:
+        - name: django
+          mountPath: "/etc/nginx/conf.d/"
+          readOnly: true
+      volumes:
+      - name: django
+        configMap:
+          name: django-conf
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend
+spec:
+  type: ClusterIP
+  ports:
+  - port: 80
+    targetPort: 80
+#   nodePort: 30010
+  selector:
+    app: nginx

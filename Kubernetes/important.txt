@@ -1,0 +1,177 @@
+5% efforts
+1) Create container image of your application
+2) Push image to ECR (docker registry)
+3) Create deployment
+4) create service
+5) Expose your application to the world
+6 done
+
+
+Objects - (95% efforts)
+
+pod
+deployment
+servies 
+    services types -
+          NodePort
+          LB
+          ClusterIP
+Ingress
+Replicaset
+Daemonset
+Namespace
+Volumes
+ConfigMap
+Secrets
+autoscaling - node autoscaling 
+pod autoscaling -
+       HPA
+       VPA
+
+
+rebuilding container image (dockerfile - nginx:1.6)
+ECR -
+
+          
+#############################################################################################################
+
+----------------------------------------------
+kops installation for the Kubernetes cluster
+----------------------------------------------
+
+Refer:-
+https://github.com/ValaxyTech/DevOpsDemos/blob/master/Kubernetes/k8s-setup.md
+
+
+1. S3 bucket is created. 
+2. IAM role is created for the instance.
+3. Route 53 is created for the Domain Name.
+
+freenorm website is accessed for the free website for having the domain name. There, we input the domain name given inside the Route53..
+
+STEPS GIVEN FROM THE GITHUB LINK GIVEN ABOVE:-
+
+Setup Kubernetes (K8s) Cluster on AWS
+1. Create Ubuntu EC2 instance
+
+2. install AWSCLI
+
+ curl https://s3.amazonaws.com/aws-cli/awscli-bundle.zip -o awscli-bundle.zip
+ apt install unzip python
+ unzip awscli-bundle.zip
+ #sudo apt-get install unzip - if you dont have unzip in your system
+ ./awscli-bundle/install -i /usr/local/aws -b /usr/local/bin/aws
+3. Install kubectl
+
+curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
+ chmod +x ./kubectl
+ sudo mv ./kubectl /usr/local/bin/kubectl
+4. Create an IAM user/role with Route53, EC2, IAM and S3 full access
+
+5. Attach IAM role to ubuntu server
+
+Note: If you create IAM user with programmatic access then provide Access keys.
+  aws configure
+
+6. Install kops on ubuntu instance:
+
+ curl -LO https://github.com/kubernetes/kops/releases/download/$(curl -s https://api.github.com/repos/kubernetes/kops/releases/latest | grep tag_name | cut -d '"' -f 4)/kops-linux-amd64
+ chmod +x kops-linux-amd64
+ sudo mv kops-linux-amd64 /usr/local/bin/kops
+
+7. Create a Route53 private hosted zone (you can create Public hosted zone if you have a domain)
+
+8. create an S3 bucket
+
+ aws s3 mb s3://dev.k8s.valaxy.in
+
+9. Expose environment variable:
+
+ export KOPS_STATE_STORE=s3://dev.k8s.valaxy.in
+
+10. Create sshkeys before creating cluster
+
+ ssh-keygen
+
+11. Create kubernetes cluster definitions on S3 bucket
+
+ kops create cluster --cloud=aws --zones=ap-southeast-1b --name=dev.k8s.valaxy.in --dns-zone=valaxy.in --dns private
+
+12. Create kubernetes cluser
+
+  kops update cluster dev.k8s.valaxy.in --yes
+
+13. Validate your cluster
+
+ kops validate cluster
+
+14. To list nodes
+
+  kubectl get nodes 
+
+****Deploying Nginx container on Kubernetes****
+  1.Deploying Nginx Container
+
+  kubectl run sample-nginx --image=nginx --replicas=2 --port=80
+  kubectl get pods
+  kubectl get deployments
+  2. Expose the deployment as service. This will create an ELB in front of those 2 containers and allow us to publicly access them:
+
+ kubectl expose deployment sample-nginx --port=80 --type=LoadBalancer
+ kubectl get services -o wide
+
+  3.To delete cluster
+
+ kops delete cluster dev.k8s.valaxy.in --yes
+
+
+##########################################################################################################################
+
+
+YAML files are created for the frontend(nginx), backend(chatapp) and database(mysql)
+1. Deployment
+2. Service
+3. Configmap for the frontend(nginx)-->django.conf
+4. Persistent volume for the Database.
+
+
+#############################################################################################################################
+
+-----------------------------
+Igress and Ingress Controller
+-----------------------------
+
+Ingress concept
+Ingress controller - yaml files is created and is in the "all yaml" file.
+
+
+
+##############################################################################################################################
+
+
+-------------------------------------
+HPA, VPA and Cluster node Autoscaling 
+-------------------------------------
+HPA:-
+kubectl autoscale frontend-deploy --min=1 --max=5 --cpu-percent=50 (for deployment)
+
+stress --cpu 8 --timeout 20
+
+
+###############################################################################################################################
+
+
+------------------------------------
+Monitoring
+------------------------------------
+
+1. Metrics Server - yaml files is created
+2. Prometheus - yaml files for deployment and service is there in "prometheus" file.
+                Refer :- https://devopscube.com/setup-prometheus-monitoring-on-kubernetes/
+3. Grafana - 
+		Refer :- https://devopscube.com/setup-grafana-kubernetes/
+
+################################################################################################################################
+ 
+
+

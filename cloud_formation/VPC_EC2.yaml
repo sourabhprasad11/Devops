@@ -1,0 +1,128 @@
+AWSTemplateFormatVersion: 2010-09-09
+# CloudFormation template: bolier_Plate
+
+Parameters:
+  InstanceTypeParameter:
+    Type: String
+    Default: t2.medium
+    Description: Default is t2.medium
+  WorkstationIp:
+    Type: String
+    Description: The IP address of the workstation that can SSH into the instance.
+  AMI:
+    Type: String
+    Default: ami-0a4a70bd98c6d6441
+    Description: The Ubuntu AMI Version-20 is used.
+  Key:
+    Description: Name of an existing EC2 KeyPair fro ec2 instance.
+    Type: AWS::EC2::KeyPair::KeyName
+    ConstraintDescription: must be the name of an existing EC2 KeyPair.
+    
+
+Resources:
+  
+  VPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: 10.3.0.0/16
+      EnableDnsSupport: true
+      EnableDnsHostnames: true
+      Tags:
+      - Key: Name
+        Value: NewVPC
+
+  InternetGateway:
+    Type: AWS::EC2::InternetGateway
+  VPCGatewayAttachment:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      VpcId: !Ref VPC
+      InternetGatewayId: !Ref InternetGateway
+
+  PublicSubnetA:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      CidrBlock: 10.3.0.0/25
+      AvailabilityZone: ap-south-1a
+      #Tags:
+      #- Key: Name
+      #  Value: !Sub ${AWS::StackName}-Public-A
+
+  RouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref VPC
+  InternetRoute:
+    Type: AWS::EC2::Route
+    DependsOn: InternetGateway
+    Properties:
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref InternetGateway
+      RouteTableId: !Ref RouteTable
+
+  PrivateSubnetA:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      CidrBlock: 10.3.0.128/25
+      AvailabilityZone: ap-south-1b
+      #Tags:
+      #- Key: Name
+      #  Value: !Sub ${AWS::StackName}-Private-B
+
+  ElasticIP:
+    Type: AWS::EC2::EIP
+    Properties:
+      Domain: vpc
+      InstanceId: !Ref Linux
+
+  Linux:
+    Type: 'AWS::EC2::Instance'
+    Properties:
+      SubnetId: !Ref PublicSubnetA
+      ImageId: !Ref AMI
+      InstanceType:
+        Ref: InstanceTypeParameter
+      KeyName: !Ref Key
+      SecurityGroupIds: [!GetAtt "InstanceSecurityGroup.GroupId"]
+#      SecurityGroupIds: !Ref InstanceSecurityGroup
+      BlockDeviceMappings:
+        - DeviceName: /dev/xvda
+          Ebs:
+            VolumeSize: 500
+#            VolumeType: General Purpose SSD (gp2)
+#      Tags:
+#        - Key: Name
+#          Value: Linux-Server
+    
+  InstanceSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+#    VpcId: !Ref VPC
+    Properties:
+      VpcId: !Ref VPC
+      GroupDescription: SSH,HTTP,Mysql,Backend access via port 22,80,3306,8000
+      SecurityGroupIngress:
+      - IpProtocol: tcp
+        FromPort: 22
+        ToPort: 22
+        CidrIp: 0.0.0.0/0
+      - IpProtocol: tcp
+        FromPort: 80
+        ToPort: 80
+        CidrIp: 0.0.0.0/0
+      - IpProtocol: tcp
+        FromPort: 8000
+        ToPort: 8000
+        CidrIp: 0.0.0.0/0
+#      - IpProtocol: MYSQL/Aurora
+#        FromPort: 3306
+#        ToPort: 3306
+#        CidrIp: 0.0.0.0/0
+           
+Outputs:
+  PublicIp:
+    Value:
+      Fn::GetAtt:
+        - Linux
+        - PublicIp

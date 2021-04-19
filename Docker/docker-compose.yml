@@ -1,0 +1,25 @@
+version: '3'
+services:
+mysql:
+image: mysql:5.6
+container_name: mysql
+environment:
+- MYSQL_ROOT_PASSWORD=delta123
+- MYSQL_DATABASE=djangodb
+volumes:
+- db-data:/var/lib/mysql
+backend:
+image: 423034607203.dkr.ecr.ap-south-1.amazonaws.com/backend:backend1
+depends_on:
+- mysql
+links:
+- mysql
+frontend:
+image: 423034607203.dkr.ecr.ap-south-1.amazonaws.com/frontendcomp:frontend5
+container_name: frontend
+depends_on:
+- backend
+ports:
+- 81:80
+volumes:
+db-data:

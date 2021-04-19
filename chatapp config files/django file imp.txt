@@ -1,0 +1,133 @@
+################
+REMEMBER VPC and SUBNET , REMEMBER TO START SERVICES(nginx,django.service,manage.py) 
+################
+
+ssh from the directory where the .pem key is.
+
+#################
+Database:
+Endpoint
+rd-database.clmfcucwmhqm.ap-south-1.rds.amazonaws.com
+Port
+3306
+database name(for private instance 10-0-0-165)- DjangoDatabase
+databse name(for private instance 10-0-0-156)- DjangoAppDatabase
+
+
+#######################
+Successfully installed Automat-20.2.0 Django-2.1.5 
+PyHamcrest-1.9.0 PyJWT-1.7.1 Twisted-18.9.0 aioredis-1.2.0 
+asgiref-2.3.2 asn1crypto-0.24.0 async-timeout-3.0.1 attrs-18.2.0 
+autobahn-19.1.1 certifi-2018.11.29 cffi-1.11.5 channels-2.1.7
+ channels-redis-2.3.1 chardet-3.0.4 constantly-15.1.0 cryptography-2.5
+ daphne-2.2.5 defusedxml-0.5.0 django-allauth-0.38.0 django-rest-auth-0.9.3 
+djangorestframework-3.7.7 drf-extensions-0.3.1 gunicorn-19.9.0 
+hiredis-1.0.0 hyperlink-18.0.0 idna-2.8 incremental-17.5.0 jwt-0.5.4 
+msgpack-0.6.1 oauthlib-3.0.1 plumber-1.5 psycopg2-2.7.7 
+psycopg2-binary-2.7.7 pycparser-2.19 python3-openid-3.1.0 
+pytz-2018.9 redis-3.1.0 requests-2.21.0 requests-oauthlib-1.2.0 
+six-1.12.0 tqdm-4.31.1 txaio-18.8.1 urllib3-1.24.1 websockets-7.0 
+zope.interface-5.2.0
+######################
+
+#######################
+django.conf
+[program:gunicorn]
+directory=/home/ubuntu/ChatApp/new_chatapp
+command=/usr/local/bin/gunicorn --workers 3 --bind unix:/home/ubuntu/ChatApp/new_chatapp/fundoo/fundooapp/app.py apps.wsgi:application
+autostart=true
+autorestart=true
+stderr_logfile=gunicorn.err.log
+stdout_logfile=gunicorn.out.log
+[group:guni]
+programs:gunicorn
+#########################################
+settins.py for database
+'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'DjangoDB',
+        'USER': 'admin',
+        'PASSWORD': '123456789',
+        'HOST': 'rd-database.clmfcucwmhqm.ap-south-1.rds.amazonaws.com',
+        'PORT': '3306',
+###########################################
+
+
+django.service
+
+[Unit]
+Description=django daemon
+After=network.target
+
+[Service]
+User=root
+#Group=www-data
+WorkingDirectory=/DpyApp/new_chatapp/fundoo
+
+ExecStart=/usr/bin/python3 /DpyApp/new_chatapp/fundoo/manage.py runserver 0.0.0.0:8000
+
+[Install]
+WantedBy=multi-user.target
+
+
+
+############################################
+
+gunicorn.service
+
+[Unit]
+Description=gunicorn daemon
+After=network.target
+[Service]
+User=root
+Group=root
+WorkingDirectory=/DpyApp/new_chatapp/fundoo
+ExecStart=/usr/local/bin/gunicorn --workers 3 --bind unix:/DpyApp/new_chatapp/fundoo/new_chatapp.sock fundoo.wsgi:application
+[Install]
+WantedBy=multi-user.target
+
+
+#############################################
+
+gunicorn:
+/usr/local/bin/gunicorn
+workingDirectory-/home/ec2-user/new_chatapp
+
+
+########################################
+server {
+  listen 80;
+  server_name 15.206.100.9;
+  location = /favicon.ico { access_log off; log_not_found off; }
+  location /static/ {
+      root /DpyApp/new_chatapp/fundoo/;
+  }
+  location / {
+      include proxy_params;
+      proxy_pass http://unix:/DpyApp/new_chatapp/fundoo/fundoo.sock
+  }
+}
+########################################
+new updated 
+########################################
+
+server {
+  listen 80;
+  server_name 15.206.100.9;
+  location = /favicon.ico { access_log off; log_not_found off; }
+  location /static/ {
+      root /DpyApp;
+  }
+  location / {
+      #include proxy_params;
+      proxy_set_header Host $http_host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+      proxy_pass http://unix:/DpyApp/new_chatapp/fundoo/new_chatapp.sock;
+  }
+}
+
+########################################
+
+
+##########################################

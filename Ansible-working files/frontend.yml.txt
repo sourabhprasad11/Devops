@@ -1,0 +1,50 @@
+
+- hosts: frontendserver
+  become: yes
+
+  tasks:
+  - name: Install nginx web server
+    apt:
+      name: nginx
+      state: present
+      update_cache: true
+    notify:
+    - start nginx
+
+#  handlers:
+  - name: start nginx
+    service:
+      name: nginx
+      state: restarted
+
+  - name: Deactivate the default nginx site
+    file:
+      path: /etc/nginx/sites-enabled/default
+      state: absent
+
+#  tasks:
+  - name: Copy files to a remote machine
+    copy:
+      src: /home/ubuntu/django.conf
+      dest: /etc/nginx/sites-available
+
+#  - name: Execute a command for delete using the shell module
+#    become: true
+#    shell: sudo rm /etc/nginx/sites-enabled/default
+
+  - name: Execute a command for soft link using the shell module
+    become: true
+    shell: sudo ln -s /etc/nginx/sites-available/django.conf /etc/nginx/sites-enabled/django.conf
+
+  - name: Execute a command for start nginx using the shell module
+    become: true
+    shell: sudo systemctl start nginx.service
+
+  - name: Execute a command for start nginx using the shell module
+    become: true
+    shell: sudo systemctl stop nginx.service
+
+  - name: Execute a command for start nginx using the shell module
+    become: true
+    shell: sudo systemctl start nginx.service
+

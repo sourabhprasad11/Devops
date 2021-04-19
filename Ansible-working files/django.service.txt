@@ -1,0 +1,23 @@
+
+[Unit]
+Description=django daemon
+After=network.target
+
+[Service]
+User=root
+#Group=www-data
+WorkingDirectory=/home/ubuntu/demo/fundoo
+
+ExecStart=/usr/bin/python3 /home/ubuntu/demo/fundoo/manage.py runserver 0.0.0.0:8000
+
+[Install]
+WantedBy=multi-user.target
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,3 @@
+
+[servers]
+host1 ansible_ssh_host=10.0.0.68 ansible_ssh_user=ubuntu

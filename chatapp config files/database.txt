@@ -9,9 +9,9 @@ done for the image upload to the ECR
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'djangodb',
+        'NAME': '',
         'USER': 'root',
-        'PASSWORD': 'delta123',
+        'PASSWORD': '',
         'HOST': 'mysql',
         'PORT': '3306',
     }

@@ -32,9 +32,9 @@ spec:
         - name: MYSQL_USER
           value: root
         - name: MYSQL_ROOT_PASSWORD
-          value: delta123
+          value: password
         - name: MYSQL_DATABASE
-          value: djangodb
+          value: database_name
         ports:
         - name: tcp
           containerPort: 3306
